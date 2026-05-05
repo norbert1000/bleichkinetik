@@ -160,51 +160,6 @@ def analyze_dataset(data, title, prefix):
 
     return -slope, lin_max
 
-# -----------------------------
-# Button
-# -----------------------------
-if st.button("Auswerten"):
-
-    data1, data2 = parse_data(text_input)
-
-    if data1 is None:
-        st.error("Fehler: Keine gültigen Daten gefunden.")
-    else:
-        st.write("Messreihe 1 (hohe Hypochlorit-Konzentration)")
-        k1, lin_max1 = analyze_dataset(data1, "Verlauf der Lichtintensität", "d1")
-
-        st.write("")
-        st.write(f"Linearer Bereich: {lin_max1:.1f} s")
-        st.write(f"Geschwindigkeitskonstante: k₁ = {k1:.5f}")
-
-        if data2 is not None:
-            st.write("")
-            st.write("Messreihe 2 (halbhohe Hypochlorit-Konzentration)")
-
-            k2, lin_max2 = analyze_dataset(data2, "Verlauf der Lichtintensität", "d2")
-
-            st.write("")
-            st.write(f"Linearer Bereich: {lin_max2:.1f} s")
-            st.write(f"Geschwindigkeitskonstante: k₂ = {k2:.5f}")
-            st.write(f"Verhältnis: k₁/k₂ = {k1/k2:.3f}. Erwarteter Wert: 2.0")
-
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-                pdf_path = tmp.name
-
-            create_pdf(pdf_path, k1, k2, k1/k2, handy, dimm, lin_max1, lin_max2)
-
-#            os.remove(pdf_path)
-
-            with open(pdf_path, "rb") as f:
-                pdf_bytes = f.read()
-
-            st.download_button(
-                label="PDF herunterladen",
-                data=pdf_bytes,
-                file_name="Auswertung.pdf",
-                mime="application/pdf"
-            )
-
 def create_pdf(filename, k1, k2, ratio, handy, dimm, lin_max1, lin_max2):
     styles = getSampleStyleSheet()
     doc = SimpleDocTemplate(filename)
@@ -252,3 +207,50 @@ def create_pdf(filename, k1, k2, ratio, handy, dimm, lin_max1, lin_max2):
     story.append(Paragraph(f"Verhältnis: k<sub>1</sub>/k<sub>2</sub> = {ratio:.3f}. Erwarteter Wert: 2.0", styles["Normal"]))
 
     doc.build(story)
+
+
+# -----------------------------
+# Button
+# -----------------------------
+if st.button("Auswerten"):
+
+    data1, data2 = parse_data(text_input)
+
+    if data1 is None:
+        st.error("Fehler: Keine gültigen Daten gefunden.")
+    else:
+        st.write("Messreihe 1 (hohe Hypochlorit-Konzentration)")
+        k1, lin_max1 = analyze_dataset(data1, "Verlauf der Lichtintensität", "d1")
+
+        st.write("")
+        st.write(f"Linearer Bereich: {lin_max1:.1f} s")
+        st.write(f"Geschwindigkeitskonstante: k₁ = {k1:.5f}")
+
+        if data2 is not None:
+            st.write("")
+            st.write("Messreihe 2 (halbhohe Hypochlorit-Konzentration)")
+
+            k2, lin_max2 = analyze_dataset(data2, "Verlauf der Lichtintensität", "d2")
+
+            st.write("")
+            st.write(f"Linearer Bereich: {lin_max2:.1f} s")
+            st.write(f"Geschwindigkeitskonstante: k₂ = {k2:.5f}")
+            st.write(f"Verhältnis: k₁/k₂ = {k1/k2:.3f}. Erwarteter Wert: 2.0")
+
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                pdf_path = tmp.name
+
+            create_pdf(pdf_path, k1, k2, k1/k2, handy, dimm, lin_max1, lin_max2)
+
+#            os.remove(pdf_path)
+
+            with open(pdf_path, "rb") as f:
+                pdf_bytes = f.read()
+
+            st.download_button(
+                label="PDF herunterladen",
+                data=pdf_bytes,
+                file_name="Auswertung.pdf",
+                mime="application/pdf"
+            )
+
