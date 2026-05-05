@@ -19,9 +19,8 @@ st.title("Kinetik der Bleichreaktion von Erioglaucin mit Natriumhypochlorit")
 handy = st.text_input("Hersteller und Typ des Handys:", "z.B. iPhone 14, Samsung Galaxy S10")
 dimm = st.text_input("Dimmstufe:", "z.B. 1 oder 1,5")
 
-st.markdown("**Übertragen Sie die Messdaten (eine oder zwei Messreihen):**")
-st.text_area("Messdaten eingeben:", height=250)
-text_input = st.text_area("", height=250)
+st.markdown("**Übertragen Sie die Messdaten (zwei Messreihen):**")
+text_input = st.text_area("Messdaten eingeben:", height=250)
 # -----------------------------
 # Parser
 # -----------------------------
