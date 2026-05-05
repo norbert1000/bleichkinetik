@@ -20,8 +20,7 @@ handy = st.text_input("Hersteller und Typ des Handys:", "z.B. iPhone 14, Samsung
 dimm = st.text_input("Dimmstufe:", "z.B. 1 oder 1,5")
 
 st.markdown("**Übertragen Sie die Messdaten (eine oder zwei Messreihen):**")
-text_input = st.text_area("", height=250)
-
+st.text_area("Messdaten eingeben:", height=250)
 # -----------------------------
 # Parser
 # -----------------------------
@@ -113,7 +112,7 @@ def find_linear_range(t2, y, slope0, tol_percent=30.0):
 # -----------------------------
 # Analyse
 # -----------------------------
-def analyze_dataset(data, title):
+def analyze_dataset(data, title, prefix):
     t = data[:, 0]
     I = data[:, 1]
 
@@ -126,9 +125,9 @@ def analyze_dataset(data, title):
     ax1.set_ylabel('Intensität I')
     ax1.set_ylim(0, ymax)
     ax1.set_title(title)
+    fig1.savefig(f"{prefix}_plot1.png")
     st.pyplot(fig1)
-
-    st.write("")
+    plt.close(fig1)
 
     # Transformation
     mask = I > 0.01
@@ -137,7 +136,6 @@ def analyze_dataset(data, title):
 
     y = np.log10(np.log10(100.0 / I2))
 
-    # Regression
     mask_fit = t2 <= 20
     t_fit = t2[mask_fit]
     y_fit = y[mask_fit]
@@ -146,7 +144,6 @@ def analyze_dataset(data, title):
     slope = coeffs[0]
 
     y_reg = np.polyval(coeffs, t2)
-
     lin_max = find_linear_range(t2, y, slope)
 
     # Plot 2
@@ -157,11 +154,8 @@ def analyze_dataset(data, title):
     ax2.set_xlabel('Zeit t (s)')
     ax2.set_ylabel('lg(lg(100 / I))')
     ax2.set_title('Linearisierte Darstellung zur Bestimmung der Geschwindigkeitskonstanten')
-    st.pyplot(fig2)
-
-    fig1.savefig(f"{prefix}_plot1.png")
     fig2.savefig(f"{prefix}_plot2.png")
-    plt.close(fig1)
+    st.pyplot(fig2)
     plt.close(fig2)
 
     return -slope, lin_max
